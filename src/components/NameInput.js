@@ -39,9 +39,14 @@ class NameInput extends React.Component{
                 </div>
                 <div className="row-no-gutters">
                     <div className="col">
-                        <input type="text" className="input-field" value ={this.props.name} onChange={this.nameInput.bind(this)}
-                        onClick={()=>{window.scrollTo(0, 200);}}
-                        placeholder="Name"/>
+                        <input 
+                            type="text" 
+                            className="input-field" 
+                            value ={this.props.name} 
+                            onChange={this.nameInput.bind(this)}
+                            onClick={()=>{window.scrollTo(0, 200);}}
+                            placeholder="Name"
+                        />
                         
                         <button className={"button-brand btn-block "+(this.props.name===''?"disabled":"")} disabled={this.props.name===''?true:false} onClick={()=>{this.props.history.push('/stepFour');}}  style={{margin:"auto"}}>
                                 Next

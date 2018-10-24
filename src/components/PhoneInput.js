@@ -92,31 +92,36 @@ class PhoneInput extends React.Component{
     }
 	
 	phoneInput(value){
-        this.props.onPhoneSelect(value);
+        var regex = /^[0-9]+$/;
 
-        if(this.props.party && this.props.time && this.props.name && value){
-            var key = db.push({
-                party: this.props.party,
-                time: this.props.time,
-                name: this.props.name,
-                phone: value,
-                status: 'pending'
-            }).getKey();
-            this.setState({
-                loader: true,
-                key
-            });
-        }
-        setTimeout(() => {
-			if(this.state.loader){
-                fire.database().ref('reservations/'+this.state.key).update({
-                    status: 'failed'
-                });
+        if(regex.test(value) || value === '')
+        {
+            this.props.onPhoneSelect(value);
+
+            if(this.props.party && this.props.time && this.props.name && value){
+                var key = db.push({
+                    party: this.props.party,
+                    time: this.props.time,
+                    name: this.props.name,
+                    phone: value,
+                    status: 'pending'
+                }).getKey();
                 this.setState({
-                    loader: false
+                    loader: true,
+                    key
                 });
             }
-		}, 60000)
+            setTimeout(() => {
+                if(this.state.loader){
+                    fire.database().ref('reservations/'+this.state.key).update({
+                        status: 'failed'
+                    });
+                    this.setState({
+                        loader: false
+                    });
+                }
+            }, 60000)
+        }   
 	}
 
 	render(){
@@ -134,7 +139,14 @@ class PhoneInput extends React.Component{
                         </div>
                         <div className="row-no-gutters">
                             <div className="col">
-                                <input className="input-field" onChange={(value) => {this.setState({value: value.target.value})}} type="number"/>
+                                <input 
+                                    className="input-field" 
+                                    onChange={(value) => {
+                                        this.setState({value: value.target.value})
+                                    }} 
+                                    type="number"
+                                    placeholder="Phone"
+                                />
                             
                                 <button className={"button-brand btn-block "+(this.state.value===''?"disabled":"")}  
                                 disabled={this.state.value===''?true:false} 
@@ -175,7 +187,7 @@ class PhoneInput extends React.Component{
                         this.setState({
                             showAlert: false
                         })
-                        
+                        this.props.history.push('/');
                     }}
                     onCancel={()=>{
                         fire.database().ref('reservations/'+this.state.key).update({
@@ -184,11 +196,11 @@ class PhoneInput extends React.Component{
                         this.setState({
                             showAlert: false
                         })
+                        this.props.history.push('/');
                     }}
                 /> 
 			</div>
         );
-
     }
 }
 
