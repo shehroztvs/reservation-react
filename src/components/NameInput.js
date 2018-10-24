@@ -19,6 +19,7 @@ class NameInput extends React.Component{
     }
 
     onNext(){
+        console.log(this.props.time)
         this.props.history.push('/stepFour');
     }
 	
@@ -34,7 +35,7 @@ class NameInput extends React.Component{
             <div className="col name-page col-10 col-md-6 col-lg-4">
                 <div className="row-no-gutters">
                     <div className="col text-center">
-                        <p className="page-heading">Name:</p>
+                        <p className="page-heading">Reservation for {this.props.party} at {this.props.time.hour}:{this.props.time.minute} {this.props.time.meridiem}</p>
                     </div>
                 </div>
                 <div className="row-no-gutters">
@@ -75,7 +76,9 @@ class NameInput extends React.Component{
 
 const mapStateToProps = (state) => {
     return{
-    	name : state.form.name
+        name : state.form.name,
+        party: state.form.party,
+        time: state.form.time
     }
 }
 

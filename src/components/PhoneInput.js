@@ -14,7 +14,7 @@ class PhoneInput extends React.Component{
 
     constructor(props){
         super(props);
-
+        console.log(this.props.time)
         this.state = {
             value: '',
             showAlert: false,
@@ -91,19 +91,19 @@ class PhoneInput extends React.Component{
         
     }
 	
-	phoneInput(value){
+	phoneInput(event){
         var regex = /^[0-9]+$/;
-
+        var value = event.target.value;
         if(regex.test(value) || value === '')
         {
             this.props.onPhoneSelect(value);
 
-            if(this.props.party && this.props.time && this.props.name && value){
+            if(this.props.party && this.props.time && this.props.name && this.props.phone){
                 var key = db.push({
                     party: this.props.party,
                     time: this.props.time,
                     name: this.props.name,
-                    phone: value,
+                    phone: this.props.phone,
                     status: 'pending'
                 }).getKey();
                 this.setState({
@@ -134,23 +134,22 @@ class PhoneInput extends React.Component{
 					<div className="col name-page col-10 col-md-6 col-lg-4">
                         <div className="row-no-gutters">
                             <div className="col text-center">
-                                <p className="page-heading">Phone:</p>
+                                <p className="page-heading">{this.props.name}, your table is being reserved for {this.props.party} at {this.props.time}</p>
                             </div>
                         </div>
                         <div className="row-no-gutters">
                             <div className="col">
                                 <input 
                                     className="input-field" 
-                                    onChange={(value) => {
-                                        this.setState({value: value.target.value})
-                                    }} 
-                                    type="number"
+                                    onChange={this.phoneInput.bind(this)} 
+                                    type="text"
                                     placeholder="Phone"
+                                    value={this.props.phone}
                                 />
                             
-                                <button className={"button-brand btn-block "+(this.state.value===''?"disabled":"")}  
-                                disabled={this.state.value===''?true:false} 
-                                onClick={this.phoneInput.bind(this, this.state.value)}>
+                                <button className={"button-brand btn-block "+(this.props.phone===''?"disabled":"")}  
+                                disabled={this.props.phone===''?true:false} 
+                                onClick={this.phoneInput.bind(this,this.props.phone)}>
                                         Make A Request
                                 </button>
                                 </div>

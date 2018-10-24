@@ -35,14 +35,15 @@ class TimeOptions extends React.Component{
 	onTimeButtonClick(minutesToAdd,selectedButton){
 		var hours;
 		var minutes;
+		var meridiem;
 		var options = {};
 
-		var newDateObj = moment(moment().format()).add(minutesToAdd, 'm').toDate();
-		hours = newDateObj.getHours().toString();
-		minutes = newDateObj.getMinutes().toString();
-
-		options = {hour: hours, minute: minutes, meridiem: ''};
-
+		var newDateObj = moment().add(minutesToAdd, 'minutes');
+		
+		hours = newDateObj.format('hh');
+		minutes = newDateObj.format('mm');
+		meridiem = newDateObj.format('A');
+		options = {hour: hours, minute: minutes, meridiem: meridiem};
 		if(options){
 			this.props.onTimeSelect(options,selectedButton);
 			setTimeout(() => {
@@ -120,7 +121,7 @@ class TimeOptions extends React.Component{
 					<div className="col time-page col-10 col-md-6 col-lg-4">
 						<div className="row-no-gutters">
 							<div className="col text-center">
-								<p className="page-heading">Time to arrival: </p>
+								<p className="page-heading">Timeslot for {this.props.party}: </p>
 							</div>
 						</div>
 						<div className="row-no-gutters">
@@ -169,7 +170,8 @@ class TimeOptions extends React.Component{
 const mapStateToProps = (state) => {
 	return{
 		selectedTime:state.form.selectedTime,
-		time : state.form.time
+		time : state.form.time,
+		party: state.form.party
     }
 }
 
