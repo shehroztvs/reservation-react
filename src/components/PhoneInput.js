@@ -97,32 +97,33 @@ class PhoneInput extends React.Component{
         if(regex.test(value) || value === '')
         {
             this.props.onPhoneSelect(value);
-
-            if(this.props.party && this.props.time && this.props.name && this.props.phone){
-                var key = db.push({
-                    party: this.props.party,
-                    time: this.props.time,
-                    name: this.props.name,
-                    phone: this.props.phone,
-                    status: 'pending'
-                }).getKey();
+        }   
+    }
+    onSubmit(){
+        if(this.props.party && this.props.time && this.props.name && this.props.phone){
+            var key = db.push({
+                party: this.props.party,
+                time: this.props.time,
+                name: this.props.name,
+                phone: this.props.phone,
+                status: 'pending'
+            }).getKey();
+            this.setState({
+                loader: true,
+                key
+            });
+        }
+        setTimeout(() => {
+            if(this.state.loader){
+                fire.database().ref('reservations/'+this.state.key).update({
+                    status: 'failed'
+                });
                 this.setState({
-                    loader: true,
-                    key
+                    loader: false
                 });
             }
-            setTimeout(() => {
-                if(this.state.loader){
-                    fire.database().ref('reservations/'+this.state.key).update({
-                        status: 'failed'
-                    });
-                    this.setState({
-                        loader: false
-                    });
-                }
-            }, 60000)
-        }   
-	}
+        }, 60000)
+    }
 
 	render(){
         return(
@@ -149,7 +150,7 @@ class PhoneInput extends React.Component{
                             
                                 <button className={"button-brand btn-block "+(this.props.phone===''?"disabled":"")}  
                                 disabled={this.props.phone===''?true:false} 
-                                onClick={this.phoneInput.bind(this,this.props.phone)}>
+                                onClick={this.onSubmit.bind(this)}>
                                         Make A Request
                                 </button>
                                 </div>
@@ -186,7 +187,7 @@ class PhoneInput extends React.Component{
                         this.setState({
                             showAlert: false
                         })
-                        this.props.history.push('/');
+                        window.location.href="/";
                     }}
                     onCancel={()=>{
                         fire.database().ref('reservations/'+this.state.key).update({
@@ -195,7 +196,7 @@ class PhoneInput extends React.Component{
                         this.setState({
                             showAlert: false
                         })
-                        this.props.history.push('/');
+                        window.location.href="/";
                     }}
                 /> 
 			</div>
