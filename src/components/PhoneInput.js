@@ -14,7 +14,7 @@ class PhoneInput extends React.Component{
 
     constructor(props){
         super(props);
-        console.log(this.props.time)
+        
         this.state = {
             value: '',
             showAlert: false,
@@ -38,7 +38,7 @@ class PhoneInput extends React.Component{
             if(data.status === 'confirmed'){
                 this.setState({
                     loader: false,
-                    showAlert: true,
+                    showAlert: data.phone == this.props.phone ? true : false,
                     data: {
                         title: 'Confirmed',
                         text: data.name+', your reservation has been confirmed at '+moment(data.time,"HH:mm").format("LT")
@@ -48,7 +48,7 @@ class PhoneInput extends React.Component{
             else if(data.status === 'rejected'){
                 this.setState({
                     loader: false,
-                    showAlert: true,
+                    showAlert: data.phone == this.props.phone ? true : false,
                     data: {
                         title: 'Rejected',
                         text: data.name+', your reservation has been rejected.'
@@ -58,7 +58,7 @@ class PhoneInput extends React.Component{
             else if(data.status === 'pending'){
                 this.setState({
                     loader: false,
-                    showAlert: true,
+                    showAlert: data.phone == this.props.phone ? true : false,
                     data: {
                         title: 'Alternate Time',
                         text: data.name+', there is availability at '+moment(data.time,"HH:mm").format("LT")
@@ -69,7 +69,7 @@ class PhoneInput extends React.Component{
             else if(data.status === 'failed'){
                 this.setState({
                     loader: false,
-                    showAlert: true,
+                    showAlert: data.phone == this.props.phone ? true : false,
                     data: {
                         title: 'Failed',
                         text: 'Restaurant not responding.'
