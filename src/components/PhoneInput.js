@@ -127,8 +127,11 @@ class PhoneInput extends React.Component{
 
 	render(){
         return(
-			<div className="wrapper has-footer">
-                	<Header/>
+			<div className="wrapper has-footer main">
+				<div className="main-header">
+				<h1 className="title text-center title-margin">Find Table</h1>
+				</div>
+				<div className="card-raised">
                     <div className="row-no-gutters mt-page justify-content-center">
                     
                     {RenderIf(this.state.loader === false, 
@@ -199,6 +202,7 @@ class PhoneInput extends React.Component{
                         window.location.href="/";
                     }}
                 /> 
+            </div>
 			</div>
         );
     }

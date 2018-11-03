@@ -4,14 +4,17 @@ import 'react-times/css/classic/default.css';
 import moment from 'moment';
 import {connect} from 'react-redux';
 import {onTimeSelect} from '../actions';
-import {Footer, Header} from './common';
+import {Footer, Header,PageHeading} from './common';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 class TimeOptions extends React.Component{
 	
 	constructor(props){
 		super(props);
 		this.state ={
-			showTimeModal: false
+			showTimeModal: false,
+			isOpen:false
 		}
 	}
 
@@ -112,58 +115,109 @@ class TimeOptions extends React.Component{
 			showTimeModal: true
 		})
 	}
+	renderClick(value){
+		this.props.onTimeSelect(value);
+		setTimeout(() => {
+			this.props.history.push('/stepThree');
+		}, 350)
+	}
+	
+	handleChange(date) {
+		// this.props.setDate(moment(date).format("YYYY-MM-DD"));
+		this.toggleCalendar()
+	  }
+	  toggleCalendar (e) {
+		e && e.preventDefault();
+		this.setState({isOpen: !this.state.isOpen})
+	  }
 
-	render(){
-		return(
-			<div className="wrapper has-footer">
-				<Header/>
-				<div className="row-no-gutters mt-page justify-content-center">
-					<div className="col time-page col-10 col-md-6 col-lg-4">
-						<div className="row-no-gutters">
-							<div className="col text-center">
-								<p className="page-heading">Timeslot for {this.props.party}: </p>
+
+
+	renderTimeSlots(){
+		if(this.props.timeSlots){
+			var items = this.props.timeSlots.map((value, key) => {
+				return(
+					<div className={`checkbox-wrap ${this.props.time === value.timeSlot? "checkbox-wrap-active":""}`} onClick={()=>{this.renderClick(value)}}
+					key={key}>
+						<div className="row">
+							<div class="form-check w-70">
+								<label class="label">
+								<input class="label__checkbox" type="checkbox"  checked={this.props.time === value.timeSlot? "checked":""}/>
+								<span class="label__text">
+									<span class="label__check">
+									<i class="fa fa-check icon" />
+									</span>
+								</span>
+								</label>
+								<label class="form-check-label" for="radio1">
+								{moment(value.timeSlot).format("LT")}
+								</label>
 							</div>
-						</div>
-						<div className="row-no-gutters">
-							<div className="col-md-6 col-6 col-xs-6 col-lg-6">
-								<button className="button-brand btn-block" 
-								style={{backgroundColor: this.props.selectedTime ===1? "#676767":""}}
-								onClick={this.onTimeButtonClick.bind(this, 15,1)}>
-									15 Mins
-								</button>
-							</div>
-							<div className="col-md-6 col-6 col-xs-6 col-lg-6">
-								<button
-								style={{backgroundColor: this.props.selectedTime ===2? "#676767":""}} 
-								className="button-brand btn-block" onClick={this.onTimeButtonClick.bind(this, 30,2)}>
-									30 Mins
-								</button>
-							</div>
-						</div>
-						<div className="row-no-gutters" style={{marginTop:20}}>
-							<div className="col-md-6 col-6 col-xs-6 col-lg-6">
-								<button 
-								style={{backgroundColor: this.props.selectedTime ===3? "#676767":""}}
-								className="button-brand btn-block" onClick={this.onTimeButtonClick.bind(this, 45,3)}>
-									45 Min
-								</button>
-							</div>
-							<div className="col-md-6 col-6 col-xs-6 col-lg-6">
-								{this.showTimeModal()}
+							<div className="float-right w-30 offer-bg" style={{display: value.promotion?"":"none"}}>
+								{value.promotion !== null?value.promotion.offer:""}
 							</div>
 						</div>
 					</div>
+				);
+			
+		})
+		return items;
+		}
+	}
+	render(){
+		return(
+			<div className="wrapper has-footer main">
+			<div className="main-header">
+			  <h1 className="title text-center title-margin">Find Table</h1>
+			</div>
+			<div className="card-raised">
+			<div className="row-no-gutters mt-page justify-content-center flex-container h-70vh">
+				<div className="col name-page col-10 col-md-6 col-lg-4">
+        
+				<PageHeading
+			  	heading={`Available Timeslots for ${this.props.party}`}
+			  	/>
+            	<div className="row-no-gutters">
+                	<div className="col-md-12 here col-12 col-xs-12 col-lg-12 h-35">
+						{this.renderTimeSlots()} 
+						</div>
+					</div>
+				<div className="row-no-gutters">
+					<div className="col">
+					<button
+						className="btn button-brand mt-35"
+						onClick={this.toggleCalendar.bind(this)}
+					>
+						Change Date
+					</button>
+					{
+					this.state.isOpen && (
+						<DatePicker
+							onClickOutside={()=>{this.setState({isOpen:!this.state.isOpen})}}
+							minDate={moment()}
+							maxDate={moment().add(10,"days")}
+							selected={moment(this.props.date)}
+							onChange={this.handleChange.bind(this)}
+							withPortal
+							inline />
+					)
+					}
+					</div>
 				</div>
-				<Footer
-					onPrevious={this.onPrevious.bind(this)}
-					onNext={this.onNext.bind(this)}
-					progressWidth="50%"
-					step="2"
-					disablePrevious={false}
-					disableNext={this.checkDisable()}
-				/>
-			</div>	
-		);
+            </div>
+          </div>
+
+          <Footer
+            onPrevious={this.onPrevious.bind(this)}
+            onNext={this.onNext.bind(this)}
+            progressWidth="50%"
+            step="2"
+            disablePrevious={false}
+            disableNext={this.checkDisable()}
+          />
+		  </div>
+        </div>
+      	);
     }
 }
 
@@ -171,7 +225,8 @@ const mapStateToProps = (state) => {
 	return{
 		selectedTime:state.form.selectedTime,
 		time : state.form.time,
-		party: state.form.party
+		party: state.form.party,
+		timeSlots: state.form.timeSlots
     }
 }
 

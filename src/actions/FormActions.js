@@ -7,10 +7,10 @@ export const onPartySelect = (value) => {
     };
 }
 
-export const onTimeSelect = (value,selectedTime) => {
+export const onTimeSelect = (value) => {
     return{
         type: TIME_SELECT,
-        payload: {value,selectedTime}
+        payload: value
     };
 }
 

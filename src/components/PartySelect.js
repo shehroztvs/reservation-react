@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {onPartySelect} from '../actions';
-import {Header,Footer} from './common';
+import {Header,Footer, PageHeading} from './common';
 
 class PartySelect extends React.Component{
 
@@ -31,15 +31,17 @@ class PartySelect extends React.Component{
 
 	render(){
         return(
-			<div className="wrapper has-footer">	
-				<Header/>
-				<div className="row-no-gutters mt-page justify-content-center">
+			<div className="wrapper has-footer main">
+				<div className="main-header">
+				<h1 className="title text-center title-margin">Find Table</h1>
+				</div>
+				<div className="card-raised">
+			
+				<div className="row-no-gutters mt-page justify-content-center flex-container">
 					<div className="col party-page col-10 col-md-6 col-lg-4">
-						<div className="row-no-gutters">
-							<div className="col text-center">
-								<p className="page-heading">Party Size:</p>
-							</div>
-						</div>
+						<PageHeading
+						heading= "Table Size"
+						/>
 						<div className="row-no-gutters">
 							<div className="col-md-3 col-3 col-xs-3 col-lg-3">
 								<button style={{backgroundColor: this.props.party === 1 ? "#676767" : ""}} className="button-brand btn-block" onClick={this.partySize.bind(this,1)}>
@@ -73,6 +75,7 @@ class PartySelect extends React.Component{
 					disablePrevious={false}
 					disableNext={this.checkDisable()}
 				/>
+				</div>
 			</div>
         );
     }
