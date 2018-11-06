@@ -53,12 +53,12 @@ export default (state = Initial_State, action) => {
             return {
                 ...state,
                 date: action.payload,
-                time: ''
+                time: '',
+                timeSlots:null
             }
         case REQUEST_AVAILABILITY:
             return{
                 ...state,
-                timeSlots:null,
                 loading:true
             }
         default:
