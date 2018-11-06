@@ -7,6 +7,7 @@ import {onTimeSelect, availability, setDate} from '../actions';
 import {Footer, Header,PageHeading} from './common';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import loader from '../assets/loader.gif'
 
 class TimeOptions extends React.Component{
 	
@@ -23,7 +24,10 @@ class TimeOptions extends React.Component{
 	}
 
 	componentWillReceiveProps(props){
-		this.renderTimeSlots();
+		if(this.props.date!== props.date){
+			this.props.availability(props.date);	
+		}
+		
 	}
 
 	onPrevious(){
@@ -148,7 +152,24 @@ class TimeOptions extends React.Component{
 	}
 
 	renderTimeSlots(){
-		if(this.props.timeSlots !== null){
+		if (this.props.loading) {
+			return (
+			  <div>
+				<img
+				  src={loader}
+				  alt="Loading"
+				  style={{
+					width: "65%",
+					height: "auto",
+					marginLeft: "auto",
+					marginRight: "auto",
+					display: "block"
+				  }}
+				/>
+			  </div>
+			);
+		  }	
+		else if(this.props.timeSlots !== null && !this.props.loading ){
 			var items = this.props.timeSlots.map((value, key) => {
 				return(
 					<div className={`checkbox-wrap ${this.props.time === value.timeSlot? "checkbox-wrap-active":""}`} onClick={()=>{this.renderClick(value)}}
@@ -197,7 +218,7 @@ class TimeOptions extends React.Component{
 					</div>
 				</div>
 
-				{/* <div className="row-no-gutters">
+				<div className="row-no-gutters" style={{display:this.props.loading?"none":""}}>
 					<div className="col">
 					<button
 						className="btn button-brand mt-35"
@@ -218,7 +239,7 @@ class TimeOptions extends React.Component{
 					)
 					}
 					</div>
-				</div> */}
+				</div>
             </div>
           </div>
 
@@ -242,7 +263,8 @@ const mapStateToProps = (state) => {
 		time : state.form.time,
 		party: state.form.party,
 		timeSlots: state.form.timeSlots,
-		date: state.form.date
+		date: state.form.date,
+		loading: state.form.loading
     }
 }
 

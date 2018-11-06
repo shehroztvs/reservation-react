@@ -18,7 +18,7 @@ const Initial_State = {
     selectedTime: null,
     loading: false,
     offer: null,
-    timeSlots: [],
+    timeSlots: null,
     date: moment().format('YYYY-MM-DDTHH:mm:ss')
 }
 
@@ -46,13 +46,20 @@ export default (state = Initial_State, action) => {
         case AVAILABILITY_SUCCESS:
             return {
                 ...state,
-                timeSlots: action.payload.data
+                timeSlots: action.payload.data,
+                loading:false
             }
         case SET_DATE:
             return {
                 ...state,
                 date: action.payload,
                 time: ''
+            }
+        case REQUEST_AVAILABILITY:
+            return{
+                ...state,
+                timeSlots:null,
+                loading:true
             }
         default:
             return state;

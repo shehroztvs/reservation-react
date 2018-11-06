@@ -40,6 +40,7 @@ export const onPhoneSelect = (value) => {
 }
 
 export const availability = (date) => {
+
     return (dispatch) => {
         dispatch({type:REQUEST_AVAILABILITY});
         axios.get(apiUrl + 'properties/1/availability?date='+date)
