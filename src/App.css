@@ -660,7 +660,7 @@ Animations
 .label__checkbox:checked + .label__text .label__check {
   animation: check 0.2s cubic-bezier(0.895, 0.03, 0.685, 0.22) forwards;
   color: #fff;
-
+}
   .icon {
     opacity: 1;
     transform: scale(0);
@@ -668,7 +668,6 @@ Animations
     -webkit-text-stroke: 0;
     animation: icon 0.3s cubic-bezier(1, 0.008, 0.565, 1.65) 0.1s 1 forwards;
   }
-}
 
 .fa-check:before {
   font-size: 0.9em;

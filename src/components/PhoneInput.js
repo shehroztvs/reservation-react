@@ -103,7 +103,7 @@ class PhoneInput extends React.Component{
         if(this.props.party && this.props.time && this.props.name && this.props.phone){
             var key = db.push({
                 party: this.props.party,
-                time: this.props.time,
+                time: moment(this.props.time).format("LT"),
                 name: this.props.name,
                 phone: this.props.phone,
                 status: 'pending'
@@ -138,7 +138,17 @@ class PhoneInput extends React.Component{
 					<div className="col name-page col-10 col-md-6 col-lg-4">
                         <div className="row-no-gutters">
                             <div className="col text-center">
-                                <p className="page-heading">{this.props.name}, your table is being reserved for {this.props.party} at {this.props.time}</p>
+                                <p className="page-heading">
+                                    <br />
+                                    <br />
+                                    {this.props.party} people @{" "}
+                                    {moment(this.props.time).format("LT")}
+                                </p>
+                                <p className="text-centet">
+                                {this.props.name}, just one more step.
+                                    <br/>
+                                    Enter phone number just in case we'll contact you.
+                                </p>
                             </div>
                         </div>
                         <div className="row-no-gutters">
@@ -161,7 +171,7 @@ class PhoneInput extends React.Component{
                         </div>
                     )}
                     {RenderIf(this.state.loader === true, 
-                         <div >
+                         <div>
                             <img src={loader} alt="Loading" style={{width:'65%',height:'auto',marginLeft: 'auto',marginRight: 'auto',display: 'block'}} />
                         </div>
                     )}
@@ -209,11 +219,12 @@ class PhoneInput extends React.Component{
 }
 
 const mapStateToProps = (state) => {
+    console.log(state);
     return{
         phone : state.form.phone,
         name: state.form.name,
         party: state.form.party,
-        time: state.form.time.hour+':'+state.form.time.minute+' '+state.form.time.meridiem
+        time: state.form.time
     }
 }
 

@@ -3,7 +3,7 @@ import TimePicker from 'react-times';
 import 'react-times/css/classic/default.css';
 import moment from 'moment';
 import {connect} from 'react-redux';
-import {onTimeSelect} from '../actions';
+import {onTimeSelect, availability, setDate} from '../actions';
 import {Footer, Header,PageHeading} from './common';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -16,6 +16,14 @@ class TimeOptions extends React.Component{
 			showTimeModal: false,
 			isOpen:false
 		}
+	}
+
+	componentDidMount(){
+		this.props.availability(this.props.date);
+	}
+
+	componentWillReceiveProps(props){
+		this.renderTimeSlots();
 	}
 
 	onPrevious(){
@@ -123,34 +131,40 @@ class TimeOptions extends React.Component{
 	}
 	
 	handleChange(date) {
-		// this.props.setDate(moment(date).format("YYYY-MM-DD"));
-		this.toggleCalendar()
-	  }
-	  toggleCalendar (e) {
-		e && e.preventDefault();
-		this.setState({isOpen: !this.state.isOpen})
-	  }
+		this.props.setDate(moment(date).format("YYYY-MM-DDT00:00:00"));
+		// if(date===moment()){
+		// 	this.props.setDate(moment().format());
+		// }
+		// else{
+		// 	this.props.setDate(moment(date).format("YYYY-MM-DDT00:00:00"));
+		// 	console.log(this.props.date);
+		// }
+		this.toggleCalendar();
+	}
 
-
+	toggleCalendar (e) {
+	e && e.preventDefault();
+	this.setState({isOpen: !this.state.isOpen})
+	}
 
 	renderTimeSlots(){
-		if(this.props.timeSlots){
+		if(this.props.timeSlots !== null){
 			var items = this.props.timeSlots.map((value, key) => {
 				return(
 					<div className={`checkbox-wrap ${this.props.time === value.timeSlot? "checkbox-wrap-active":""}`} onClick={()=>{this.renderClick(value)}}
 					key={key}>
 						<div className="row">
-							<div class="form-check w-70">
-								<label class="label">
-								<input class="label__checkbox" type="checkbox"  checked={this.props.time === value.timeSlot? "checked":""}/>
-								<span class="label__text">
-									<span class="label__check">
-									<i class="fa fa-check icon" />
+							<div className="form-check w-70">
+								<label className="label">
+									<input className="label__checkbox" type="checkbox"  checked={this.props.time === value.timeSlot? "checked":""} onChange={() => console.log('changed')}/>
+									<span className="label__text">
+										<span className="label__check">
+											<i className="fa fa-check icon" />
+										</span>
 									</span>
-								</span>
 								</label>
-								<label class="form-check-label" for="radio1">
-								{moment(value.timeSlot).format("LT")}
+								<label className="form-check-label">
+									{moment(value.timeSlot).format("LT")}
 								</label>
 							</div>
 							<div className="float-right w-30 offer-bg" style={{display: value.promotion?"":"none"}}>
@@ -161,7 +175,7 @@ class TimeOptions extends React.Component{
 				);
 			
 		})
-		return items;
+			return items;
 		}
 	}
 	render(){
@@ -175,14 +189,15 @@ class TimeOptions extends React.Component{
 				<div className="col name-page col-10 col-md-6 col-lg-4">
         
 				<PageHeading
-			  	heading={`Available Timeslots for ${this.props.party}`}
+			  	heading={`Arrival Time for ${this.props.party}`}
 			  	/>
             	<div className="row-no-gutters">
-                	<div className="col-md-12 here col-12 col-xs-12 col-lg-12 h-35">
+                	<div className="col-md-12 col-12 col-xs-12 col-lg-12 h-35">
 						{this.renderTimeSlots()} 
-						</div>
 					</div>
-				<div className="row-no-gutters">
+				</div>
+
+				{/* <div className="row-no-gutters">
 					<div className="col">
 					<button
 						className="btn button-brand mt-35"
@@ -203,7 +218,7 @@ class TimeOptions extends React.Component{
 					)
 					}
 					</div>
-				</div>
+				</div> */}
             </div>
           </div>
 
@@ -223,11 +238,19 @@ class TimeOptions extends React.Component{
 
 const mapStateToProps = (state) => {
 	return{
-		selectedTime:state.form.selectedTime,
+		selectedTime: state.form.selectedTime,
 		time : state.form.time,
 		party: state.form.party,
-		timeSlots: state.form.timeSlots
+		timeSlots: state.form.timeSlots,
+		date: state.form.date
     }
 }
 
-export default connect(mapStateToProps,{onTimeSelect})(TimeOptions)
+export default connect(
+	mapStateToProps, 
+	{
+		onTimeSelect,
+		availability,
+		setDate
+	}
+)(TimeOptions)

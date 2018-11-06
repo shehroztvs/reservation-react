@@ -20,7 +20,6 @@ class NameInput extends React.Component{
     }
 
     onNext(){
-        console.log(this.props.time)
         this.props.history.push('/stepFour');
     }
 	
@@ -48,7 +47,7 @@ class NameInput extends React.Component{
                         <br />
                         <br />
                         {this.props.party} people @{" "}
-                        {moment(this.props.time.timeSlot).format("LT")}
+                        {moment(this.props.time).format("LT")}
                       </p>
                       <p className="text-centet">
                         Enter name below and we'll have the table ready for you.
