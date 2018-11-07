@@ -2,6 +2,7 @@
   "name": "widget_airport",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/reservation-react/",
   "dependencies": {
     "firebase": "5.5.2",
     "jquery": "3.3.1",
