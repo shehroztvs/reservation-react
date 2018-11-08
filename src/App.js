@@ -19,7 +19,7 @@ class App extends Component {
   render() {
     return (
       <Provider store={createStore(reducers,{},applyMiddleware(ReduxThunk))}>
-        <Router basename='/reservation-react/'>
+        <Router>
           <Switch>
             <Route exact path="/" component={PageShell(PartySelect)} />
             <Route path="/stepTwo" component={PageShell(TimeOptions)} />
