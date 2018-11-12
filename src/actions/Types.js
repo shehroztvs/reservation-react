@@ -3,5 +3,7 @@ export const TIME_SELECT = "time_select";
 export const NAME_SELECT = "name_select";
 export const PHONE_SELECT = "phone_select";
 export const REQUEST_AVAILABILITY = "request_availability";
+export const REQUEST_RESERVATION = "request_reservation";
 export const AVAILABILITY_SUCCESS = "availability_success";
+export const RESERVATION_SUCCESS = "reservation_success";
 export const SET_DATE = "set_date";

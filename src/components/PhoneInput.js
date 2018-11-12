@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {onPhoneSelect} from '../actions';
+import { onPhoneSelect, reservation} from '../actions';
 import {Footer} from './common';
 import {fire} from './../config';
 import SweetAlert from 'sweetalert-react';
@@ -79,6 +79,8 @@ class PhoneInput extends React.Component{
         })
     }
 
+
+
     onPrevious(){
         this.props.history.push('stepThree')
     }
@@ -97,29 +99,30 @@ class PhoneInput extends React.Component{
     }
 
     onSubmit(){
-        if(this.props.party && this.props.time && this.props.name && this.props.phone){
-            var key = db.push({
-                party: this.props.party,
-                time: moment(this.props.time).format("LT"),
-                name: this.props.name,
-                phone: this.props.phone,
-                status: 'pending'
-            }).getKey();
-            this.setState({
-                loader: true,
-                key
-            });
-        }
-        setTimeout(() => {
-            if(this.state.loader){
-                fire.database().ref('reservations/'+this.state.key).update({
-                    status: 'failed'
-                });
-                this.setState({
-                    loader: false
-                });
-            }
-        }, 60000)
+        this.props.reservation();
+        // if(this.props.party && this.props.time && this.props.name && this.props.phone){
+        //     var key = db.push({
+        //         party: this.props.party,
+        //         time: moment(this.props.time).format("LT"),
+        //         name: this.props.name,
+        //         phone: this.props.phone,
+        //         status: 'pending'
+        //     }).getKey();
+        //     this.setState({
+        //         loader: true,
+        //         key
+        //     });
+        // }
+        // setTimeout(() => {
+        //     if(this.state.loader){
+        //         fire.database().ref('reservations/'+this.state.key).update({
+        //             status: 'failed'
+        //         });
+        //         this.setState({
+        //             loader: false
+        //         });
+        //     }
+        // }, 60000)
     }
 
 	render(){
@@ -226,6 +229,7 @@ const mapStateToProps = (state) => {
 export default connect(
     mapStateToProps,
     {
-        onPhoneSelect
+        onPhoneSelect,
+        reservation
     }
 )(PhoneInput)

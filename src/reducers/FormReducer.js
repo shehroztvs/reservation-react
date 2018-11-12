@@ -4,7 +4,9 @@ import {
     NAME_SELECT,
     PHONE_SELECT,
     REQUEST_AVAILABILITY,
+    REQUEST_RESERVATION,
     AVAILABILITY_SUCCESS,
+    RESERVATION_SUCCESS,
     SET_DATE
 } from '../actions/Types';
 
@@ -19,6 +21,7 @@ const Initial_State = {
     loading: false,
     offer: null,
     timeSlots: null,
+    reservation: null,
     date: moment().format('YYYY-MM-DDTHH:mm:ss')
 }
 
@@ -48,6 +51,11 @@ export default (state = Initial_State, action) => {
                 ...state,
                 timeSlots: action.payload.data,
                 loading:false
+            }
+        case RESERVATION_SUCCESS:
+            return {
+                ...state,
+                reservation: action.payload.data
             }
         case SET_DATE:
             return {
