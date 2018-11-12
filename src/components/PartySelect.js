@@ -1,10 +1,25 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { onPartySelect } from '../actions';
+import { onPartySelect,checkAuthorization,onCompletion } from '../actions';
 import { Footer, PageHeading } from './common';
+import queryString from 'query-string';
+import loader from '../assets/loader.gif';
+import forbidden from '../assets/forbidden.png';
 
 class PartySelect extends React.Component{
 
+	constructor(props){
+		super(props);
+		const values = queryString.parse(this.props.location.search);
+		this.state = {
+			secret_key: values.id
+		};
+	}
+	componentDidMount() {
+		if (this.props.auth === false) {
+			this.props.checkAuthorization(this.state.secret_key);
+		}
+	}
 	checkDisable(){
         if(this.props.party === ''){
             return true;
@@ -29,14 +44,16 @@ class PartySelect extends React.Component{
 		}, 200)
 	}
 
-	render(){
-        return(
-			<div className="wrapper has-footer">
-				<div className="main-header">
-					<h1 className="title text-center title-margin">Find Table</h1>
-				</div>
-				<div className="card-raised">
-					<div className="row-no-gutters mt-page justify-content-center flex-container">
+	renderBody(){
+		if(this.props.loading){
+			return(
+			<div>
+				<img src={loader} alt="Loading" style={{width:'65%',height:'auto',marginLeft: 'auto',marginRight: 'auto',display: 'block'}} />
+			</div>);
+		}
+		else if(this.props.auth){
+			return(
+				
 						<div className="col party-page col-10 col-md-6 col-lg-4">
 							<PageHeading heading = "Table Size"/>
 							<div className="row-no-gutters">
@@ -71,6 +88,26 @@ class PartySelect extends React.Component{
 								</div>
 							</div>
 						</div>
+					
+			)
+		}
+		else{
+			return(
+				<div>
+					<img src={forbidden} alt="Loading" style={{width:'65%',height:'auto',marginLeft: 'auto',marginRight: 'auto',display: 'block'}} />
+				</div>
+			);
+		}
+	}
+	render(){
+        return(
+			<div className="wrapper has-footer">
+				<div className="main-header">
+					<h1 className="title text-center title-margin">Find Table</h1>
+				</div>
+				<div className="card-raised">
+					<div className="row-no-gutters mt-page justify-content-center flex-container">
+						{this.renderBody()}
 					</div>
 					<Footer
 						{...this.props}
@@ -89,13 +126,15 @@ class PartySelect extends React.Component{
 
 const mapStateToProps = (state) => {
     return{
-    	party : state.form.party
+		party : state.form.party,
+		auth: state.form.auth,
+		loading:state.form.loading
     }
 }
 
 export default connect(
 	mapStateToProps,
 	{
-		onPartySelect
+		onPartySelect,checkAuthorization,onCompletion
 	}
 )(PartySelect)

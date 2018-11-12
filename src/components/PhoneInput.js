@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import { onPhoneSelect, reservation} from '../actions';
+import { onPhoneSelect, reservation,onCompletion   } from '../actions';
 import {Footer} from './common';
 import {fire} from './../config';
 import SweetAlert from 'sweetalert-react';
@@ -100,30 +100,37 @@ class PhoneInput extends React.Component{
 
     onSubmit(){
         this.props.reservation();
-        // if(this.props.party && this.props.time && this.props.name && this.props.phone){
-        //     var key = db.push({
-        //         party: this.props.party,
-        //         time: moment(this.props.time).format("LT"),
-        //         name: this.props.name,
-        //         phone: this.props.phone,
-        //         status: 'pending'
-        //     }).getKey();
-        //     this.setState({
-        //         loader: true,
-        //         key
-        //     });
-        // }
-        // setTimeout(() => {
-        //     if(this.state.loader){
-        //         fire.database().ref('reservations/'+this.state.key).update({
-        //             status: 'failed'
-        //         });
-        //         this.setState({
-        //             loader: false
-        //         });
-        //     }
-        // }, 60000)
+        if(this.props.party && this.props.time && this.props.name && this.props.phone){
+            var key = db.push({
+                party: this.props.party,
+                time: moment(this.props.time).format("LT"),
+                name: this.props.name,
+                phone: this.props.phone,
+                status: 'pending'
+            }).getKey();
+            this.setState({
+                loader: true,
+                key
+            });
+        }
+        setTimeout(() => {
+            if(this.state.loader){
+                fire.database().ref('reservations/'+this.state.key).update({
+                    status: 'failed'
+                });
+                this.setState({
+                    loader: false
+                });
+            }
+        }, 60000)
     }
+
+    onCompletion() {
+        this.props.onCompletion(
+        this.props.propertyId,
+        this.props.auth);
+        this.props.history.push("/");
+      }
 
 	render(){
         return(
@@ -199,7 +206,7 @@ class PhoneInput extends React.Component{
                             this.setState({
                                 showAlert: false
                             })
-                            window.location.href="/";
+                            this.onCompletion();
                         }}
                         onCancel={()=>{
                             fire.database().ref('reservations/'+this.state.key).update({
@@ -208,7 +215,7 @@ class PhoneInput extends React.Component{
                             this.setState({
                                 showAlert: false
                             })
-                            window.location.href="/";
+                            this.onCompletion();
                         }}
                     /> 
                 </div>
@@ -222,7 +229,9 @@ const mapStateToProps = (state) => {
         phone : state.form.phone,
         name: state.form.name,
         party: state.form.party,
-        time: state.form.time
+        time: state.form.time,
+        propertyId: state.form.propertyId,
+        auth: state.form.auth
     }
 }
 
@@ -230,6 +239,7 @@ export default connect(
     mapStateToProps,
     {
         onPhoneSelect,
-        reservation
+        reservation,
+        onCompletion
     }
 )(PhoneInput)

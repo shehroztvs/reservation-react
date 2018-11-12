@@ -7,7 +7,10 @@ import {
     REQUEST_RESERVATION,
     AVAILABILITY_SUCCESS,
     RESERVATION_SUCCESS,
-    SET_DATE
+    SET_DATE,
+    AUTH_SUCCESS,
+    AUTH_FAIL,
+    COMPLETION
 } from '../actions/Types';
 
 import moment from "moment";
@@ -22,7 +25,9 @@ const Initial_State = {
     offer: null,
     timeSlots: null,
     reservation: null,
-    date: moment().format('YYYY-MM-DDTHH:mm:ss')
+    date: moment().format('YYYY-MM-DDTHH:mm:ss'),
+    auth:false,
+    property_id:null
 }
 
 export default (state = Initial_State, action) => {
@@ -68,6 +73,26 @@ export default (state = Initial_State, action) => {
             return{
                 ...state,
                 loading:true
+            }
+        case AUTH_SUCCESS:
+            return{
+                ...state,
+                auth:true,
+                loading:false,
+                propertyId: action.payload.property_id
+            }
+        case AUTH_FAIL:
+            return{
+                ...state,
+                auth:false,
+                loading:false
+            }
+        case COMPLETION:
+            return{
+                ...state,
+                ...Initial_State,
+                propertyId:action.payload.propertyId,
+                auth:action.payload.auth,
             }
         default:
             return state;

@@ -7,3 +7,6 @@ export const REQUEST_RESERVATION = "request_reservation";
 export const AVAILABILITY_SUCCESS = "availability_success";
 export const RESERVATION_SUCCESS = "reservation_success";
 export const SET_DATE = "set_date";
+export const AUTH_SUCCESS="auth_success";
+export const AUTH_FAIL= "auth_fail";
+export const COMPLETION = "completion";

@@ -7,7 +7,10 @@ import {
     REQUEST_RESERVATION,
     AVAILABILITY_SUCCESS,
     RESERVATION_SUCCESS,
-    SET_DATE
+    SET_DATE,
+    AUTH_FAIL,
+    AUTH_SUCCESS,
+    COMPLETION
 } from './Types';
 
 import axios from 'axios';
@@ -52,7 +55,6 @@ export const availability = (date) => {
 
 export const reservation = () => {
     return (dispatch) => {
-        dispatch({type: REQUEST_RESERVATION});
         axios.post(apiUrl + 'reservations', {
             property_id: 1,
             promotion_id: 2,
@@ -90,4 +92,35 @@ const reservationSuccess = (dispatch, response) => {
         type: RESERVATION_SUCCESS,
         payload: response
     });
+}
+
+export const checkAuthorization =(secret)=>{
+    return (dispatch)=>{
+        dispatch({type:REQUEST_AVAILABILITY});
+        axios.post(apiUrl + 'domainVerification', {
+            secret: secret
+          })
+        .then(response=>authSuccess(dispatch,response))
+        .catch(()=>authFail(dispatch))
+        
+    }
+}
+const authSuccess=(dispatch,response)=>{
+    
+    dispatch({
+        type:response.data?AUTH_SUCCESS:AUTH_FAIL,
+        payload:response
+    })
+
+}
+const authFail=(dispatch)=>{
+    dispatch({
+        type:AUTH_FAIL
+    })
+}
+export const onCompletion=(propertyId,auth)=>{
+    return{
+        type:COMPLETION,
+        payload:{propertyId,auth}
+    }
 }
