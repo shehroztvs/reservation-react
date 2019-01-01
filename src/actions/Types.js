@@ -10,3 +10,4 @@ export const SET_DATE = "set_date";
 export const AUTH_SUCCESS="auth_success";
 export const AUTH_FAIL= "auth_fail";
 export const COMPLETION = "completion";
+export const SET_STATUS = "set_status";

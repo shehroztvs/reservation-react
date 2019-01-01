@@ -26,7 +26,7 @@ const Initial_State = {
     timeSlots: null,
     reservation: null,
     date: moment().format('YYYY-MM-DDTHH:mm:ss'),
-    auth:false,
+    auth:true,
     property_id:null
 }
 

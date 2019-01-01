@@ -53,26 +53,28 @@ export const availability = (date) => {
     }
 }
 
-export const reservation = () => {
+export const reservation = (name,time,party,phone) => {
     return (dispatch) => {
-        axios.post(apiUrl + 'reservations', {
-            property_id: 1,
+        axios.post('http://18.188.172.6/api/public/v2/properties/reservations', {
+            property_id: 10668,
             promotion_id: 2,
-            party_size: 3,
-            reservation_time: '2018-11-05T11:57:00+5',
+            party_size: party,
+            reservation_time: time,
             reservation_type: 'official',
-            name: 'Shehroz Aamir',
-            phone: '03360824990'
+            name,
+            phone,
+            status: 'completed'
         }, {
             headers: {
-                'ClientId':'visitor'
+                'ClientId':'member',
+                'UserId':'306',
+                'Auth':'ae7c944ed06e1260a6a915d7f1dfc0a1'
             }
         })
             .then((response) => {console.log(response); reservationSuccess(dispatch, response)})
             .catch((error) => console.log(error));
-    }
 }
-
+}
 export const setDate = (date) => {
     return{
         type:SET_DATE,

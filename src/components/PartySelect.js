@@ -17,7 +17,7 @@ class PartySelect extends React.Component{
 	}
 	componentDidMount() {
 		if (this.props.auth === false) {
-			this.props.checkAuthorization(this.state.secret_key);
+			// this.props.checkAuthorization(this.state.secret_key);
 		}
 	}
 	checkDisable(){

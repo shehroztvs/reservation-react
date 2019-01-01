@@ -9,5 +9,5 @@ const firebaseConfig = {
     messagingSenderId: "953850628331"
 }
 
-export const apiUrl = "http://192.168.100.28/eet/reservation/api/public/admin/";
+export const apiUrl = "http://staging.golootlo.pk/reservation-api/public/admin/";
 export const fire = firebase.initializeApp(firebaseConfig);

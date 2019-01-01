@@ -29,7 +29,9 @@ class PhoneInput extends React.Component{
     componentDidMount(){
         db = fire.database().ref().child('reservations');
         db.on('child_changed', (snapshot) => {
+            
             var data = snapshot.val();
+            if(data.read==='client'){
             if(data.status){
                 this.setState({
                     status:data.status
@@ -76,6 +78,7 @@ class PhoneInput extends React.Component{
                     }
                 })
             }
+        }
         })
     }
 
@@ -99,14 +102,15 @@ class PhoneInput extends React.Component{
     }
 
     onSubmit(){
-        this.props.reservation();
+        this.props.reservation(this.props.name,this.props.time,this.props.party,this.props.phone);
         if(this.props.party && this.props.time && this.props.name && this.props.phone){
             var key = db.push({
                 party: this.props.party,
                 time: moment(this.props.time).format("LT"),
                 name: this.props.name,
                 phone: this.props.phone,
-                status: 'pending'
+                status: 'pending',
+                read:'merchant'
             }).getKey();
             this.setState({
                 loader: true,
@@ -200,7 +204,8 @@ class PhoneInput extends React.Component{
                         onConfirm={() => {
                             if(this.state.status==="pending"){
                                 fire.database().ref('reservations/'+this.state.key).update({
-                                    status: 'confirmed'
+                                    status: 'confirmed',
+                                    read:'merchant'
                                 });
                             }
                             this.setState({
@@ -210,7 +215,8 @@ class PhoneInput extends React.Component{
                         }}
                         onCancel={()=>{
                             fire.database().ref('reservations/'+this.state.key).update({
-                                status: 'failed'
+                                status: 'failed',
+                                read:'merchant'
                             });
                             this.setState({
                                 showAlert: false
