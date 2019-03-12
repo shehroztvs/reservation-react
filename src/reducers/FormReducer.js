@@ -39,7 +39,7 @@ export default (state = Initial_State, action) => {
             }
         case TIME_SELECT:
             return {...state,
-                time: action.payload.timeSlot,
+                time: action.payload.startTime,
                 offer: action.payload.promotion
             }
         case NAME_SELECT:
@@ -54,7 +54,7 @@ export default (state = Initial_State, action) => {
         case AVAILABILITY_SUCCESS:
             return {
                 ...state,
-                timeSlots: action.payload.data,
+                timeSlots: action.payload.data.records,
                 loading:false
             }
         case RESERVATION_SUCCESS:

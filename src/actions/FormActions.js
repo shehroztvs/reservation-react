@@ -44,36 +44,43 @@ export const onPhoneSelect = (value) => {
     };
 }
 
-export const availability = (date) => {
+export const availability = (date, partySize) => {
     return (dispatch) => {
         dispatch({type: REQUEST_AVAILABILITY});
-        axios.get(apiUrl + 'properties/1/availability?date='+date)
-            .then((response) => availabilitySuccess(dispatch, response))
-            .catch((error) => console.log(error));
+        axios.get(
+            apiUrl + 'properties/1/availability',
+            {
+                params: {
+                    date,
+                    partySize,
+                    propertyId: 1,
+                    currentTime: '03:03:00'
+                }
+            }
+        )
+        .then((response) => availabilitySuccess(dispatch, response))
+        .catch((error) => console.log(error));
     }
 }
 
-export const reservation = (name,time,party,phone) => {
+export const reservation = (name, time, party, phone, propertyId, promotion) => {
     return (dispatch) => {
-        axios.post('http://18.188.172.6/api/public/v2/properties/reservations', {
-            property_id: 10668,
-            promotion_id: 2,
-            party_size: party,
-            reservation_time: time,
-            reservation_type: 'official',
-            name,
-            phone,
-            status: 'completed'
-        }, {
-            headers: {
-                'ClientId':'member',
-                'UserId':'306',
-                'Auth':'ae7c944ed06e1260a6a915d7f1dfc0a1'
+        axios.post(
+            apiUrl + 'reservations',
+            {
+                propertyId: propertyId,
+                promotionId: promotion.iD,
+                partySize: party,
+                reservationTime: time,
+                // reservation_type: 'official',
+                name,
+                phone,
+                status: 'approved'
             }
-        })
-            .then((response) => {console.log(response); reservationSuccess(dispatch, response)})
-            .catch((error) => console.log(error));
-}
+        )
+        .then((response) => {console.log(response); reservationSuccess(dispatch, response)})
+        .catch((error) => console.log(error));
+    }
 }
 export const setDate = (date) => {
     return{
@@ -85,11 +92,12 @@ export const setDate = (date) => {
 const availabilitySuccess = (dispatch, response) => {
     dispatch({
         type: AVAILABILITY_SUCCESS,
-        payload: response
+        payload: response.data
     });
 }
 
 const reservationSuccess = (dispatch, response) => {
+    console.log(response);
     dispatch({
         type: RESERVATION_SUCCESS,
         payload: response

@@ -82,8 +82,6 @@ class PhoneInput extends React.Component{
         })
     }
 
-
-
     onPrevious(){
         this.props.history.push('stepThree')
     }
@@ -102,7 +100,14 @@ class PhoneInput extends React.Component{
     }
 
     onSubmit(){
-        this.props.reservation(this.props.name,this.props.time,this.props.party,this.props.phone);
+        this.props.reservation(
+            this.props.name,
+            this.props.time,
+            this.props.party,
+            this.props.phone,
+            1,
+            this.props.promotion
+        );
         if(this.props.party && this.props.time && this.props.name && this.props.phone){
             var key = db.push({
                 party: this.props.party,
@@ -131,7 +136,7 @@ class PhoneInput extends React.Component{
 
     onCompletion() {
         this.props.onCompletion(
-        this.props.propertyId,
+        1,
         this.props.auth);
         this.props.history.push("/");
       }
@@ -237,7 +242,8 @@ const mapStateToProps = (state) => {
         party: state.form.party,
         time: state.form.time,
         propertyId: state.form.propertyId,
-        auth: state.form.auth
+        auth: state.form.auth,
+        promotion: state.form.offer
     }
 }
 
