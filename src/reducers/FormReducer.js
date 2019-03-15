@@ -26,8 +26,10 @@ const Initial_State = {
     timeSlots: null,
     reservation: null,
     date: moment().format('YYYY-MM-DDTHH:mm:ss'),
-    auth:true,
-    property_id:null
+    auth: false,
+    property_id: null,
+    minPartySize: null,
+    maxPartySize: null,
 }
 
 export default (state = Initial_State, action) => {
@@ -77,9 +79,11 @@ export default (state = Initial_State, action) => {
         case AUTH_SUCCESS:
             return{
                 ...state,
-                auth:true,
-                loading:false,
-                propertyId: action.payload.property_id
+                auth: true,
+                loading: false,
+                propertyId: action.payload.data.iD,
+                minPartySize: parseInt(action.payload.data.minPartySize),
+                maxPartySize: parseInt(action.payload.data.maxPartySize)
             }
         case AUTH_FAIL:
             return{

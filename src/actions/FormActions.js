@@ -97,7 +97,6 @@ const availabilitySuccess = (dispatch, response) => {
 }
 
 const reservationSuccess = (dispatch, response) => {
-    console.log(response);
     dispatch({
         type: RESERVATION_SUCCESS,
         payload: response
@@ -109,25 +108,26 @@ export const checkAuthorization =(secret)=>{
         dispatch({type:REQUEST_AVAILABILITY});
         axios.post(apiUrl + 'domainVerification', {
             secret: secret
-          })
+        })
         .then(response=>authSuccess(dispatch,response))
         .catch(()=>authFail(dispatch))
-        
     }
 }
+
 const authSuccess=(dispatch,response)=>{
-    
+    console.log(response.data);
     dispatch({
         type:response.data?AUTH_SUCCESS:AUTH_FAIL,
-        payload:response
+        payload:response.data
     })
-
 }
+
 const authFail=(dispatch)=>{
     dispatch({
         type:AUTH_FAIL
     })
 }
+
 export const onCompletion=(propertyId,auth)=>{
     return{
         type:COMPLETION,
