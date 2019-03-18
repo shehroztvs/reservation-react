@@ -13,7 +13,7 @@ const PageShell = Page => {
       > 
         <Page {...props} />
       </ReactCSSTransitionGroup>
-    </div>;
+    </div>
 };
 
 export default PageShell;

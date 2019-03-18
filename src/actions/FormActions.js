@@ -4,7 +4,6 @@ import {
     NAME_SELECT, 
     PHONE_SELECT,
     REQUEST_AVAILABILITY,
-    REQUEST_RESERVATION,
     AVAILABILITY_SUCCESS,
     RESERVATION_SUCCESS,
     SET_DATE,
@@ -12,9 +11,8 @@ import {
     AUTH_SUCCESS,
     COMPLETION
 } from './Types';
-
 import axios from 'axios';
-import {apiUrl} from '../config';
+import { apiUrl } from '../config';
 
 export const onPartySelect = (value) => {
     return{
@@ -44,17 +42,15 @@ export const onPhoneSelect = (value) => {
     };
 }
 
-export const availability = (date, partySize) => {
+export const availability = (date, partySize, propertyId) => {
     return (dispatch) => {
         dispatch({type: REQUEST_AVAILABILITY});
         axios.get(
-            apiUrl + 'properties/1/availability',
+            apiUrl + 'properties/'+propertyId+'/availability',
             {
                 params: {
                     date,
                     partySize,
-                    propertyId: 1,
-                    currentTime: '03:03:00'
                 }
             }
         )
@@ -63,19 +59,20 @@ export const availability = (date, partySize) => {
     }
 }
 
-export const reservation = (name, time, party, phone, propertyId, promotion) => {
+export const reservation = (name, time, party, phone, propertyId, promotion, endTime, type) => {
     return (dispatch) => {
         axios.post(
             apiUrl + 'reservations',
             {
                 propertyId: propertyId,
-                promotionId: promotion.iD,
+                promotionId: promotion,
                 partySize: party,
-                reservationTime: time,
-                // reservation_type: 'official',
+                startTime: time,
+                type,
                 name,
                 phone,
-                status: 'approved'
+                status: 'approved',
+                endTime
             }
         )
         .then((response) => {console.log(response); reservationSuccess(dispatch, response)})
@@ -115,7 +112,6 @@ export const checkAuthorization =(secret)=>{
 }
 
 const authSuccess=(dispatch,response)=>{
-    console.log(response.data);
     dispatch({
         type:response.data?AUTH_SUCCESS:AUTH_FAIL,
         payload:response.data

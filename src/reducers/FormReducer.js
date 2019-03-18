@@ -25,11 +25,13 @@ const Initial_State = {
     offer: null,
     timeSlots: null,
     reservation: null,
-    date: moment().format('YYYY-MM-DDTHH:mm:ss'),
+    date: moment().format('YYYY-MM-DD HH:mm:ss'),
     auth: false,
-    property_id: null,
+    propertyId: null,
     minPartySize: null,
     maxPartySize: null,
+    endTime: null,
+    promotionId: null,
 }
 
 export default (state = Initial_State, action) => {
@@ -42,7 +44,9 @@ export default (state = Initial_State, action) => {
         case TIME_SELECT:
             return {...state,
                 time: action.payload.startTime,
-                offer: action.payload.promotion
+                offer: action.payload.offers,
+                endTime: action.payload.endTime,
+                promotionId: action.payload.iD
             }
         case NAME_SELECT:
             return {

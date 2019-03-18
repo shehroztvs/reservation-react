@@ -1,8 +1,8 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import { onPhoneSelect, reservation,onCompletion   } from '../actions';
-import {Footer} from './common';
-import {fire} from './../config';
+import { connect } from 'react-redux';
+import { onPhoneSelect, reservation, onCompletion } from '../actions';
+import { Footer } from './common';
+import { fire } from './../config';
 import SweetAlert from 'sweetalert-react';
 import RenderIf from '../RenderIf';
 import loader from '../assets/loader.gif';
@@ -10,9 +10,9 @@ import moment from 'moment';
 
 let db;
 
-class PhoneInput extends React.Component{
+class PhoneInput extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         
         this.state = {
@@ -26,69 +26,67 @@ class PhoneInput extends React.Component{
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         db = fire.database().ref().child('reservations');
         db.on('child_changed', (snapshot) => {
             
             var data = snapshot.val();
             if(data.read==='client'){
-            if(data.status){
-                this.setState({
-                    status:data.status
-                })
+                if(data.status){
+                    this.setState({
+                        status:data.status
+                    });
+                }
+                if(data.status === 'confirmed'){
+                    this.setState({
+                        loader: false,
+                        showAlert: data.phone === this.props.phone ? true : false,
+                        data: {
+                            title: 'Confirmed',
+                            text: data.name+', your reservation has been confirmed at '+moment(data.time,"HH:mm").format("LT")
+                        }
+                    });
+                }
+                else if(data.status === 'rejected'){
+                    this.setState({
+                        loader: false,
+                        showAlert: data.phone === this.props.phone ? true : false,
+                        data: {
+                            title: 'Rejected',
+                            text: data.name+', your reservation has been rejected.'
+                        }
+                    });
+                }
+                else if(data.status === 'pending'){
+                    this.setState({
+                        loader: false,
+                        showAlert: data.phone === this.props.phone ? true : false,
+                        data: {
+                            title: 'Alternate Time',
+                            text: data.name+', there is availability at '+moment(data.time,"HH:mm").format("LT")
+                        },
+                        showCancelButton:true
+                    });
+                }
+                else if(data.status === 'failed'){
+                    this.setState({
+                        loader: false,
+                        showAlert: data.phone === this.props.phone ? true : false,
+                        data: {
+                            title: 'Failed',
+                            text: 'Restaurant not responding.'
+                        }
+                    });
+                }
             }
-            if(data.status === 'confirmed'){
-                this.setState({
-                    loader: false,
-                    showAlert: data.phone === this.props.phone ? true : false,
-                    data: {
-                        title: 'Confirmed',
-                        text: data.name+', your reservation has been confirmed at '+moment(data.time,"HH:mm").format("LT")
-                    }
-                })
-            }
-            else if(data.status === 'rejected'){
-                this.setState({
-                    loader: false,
-                    showAlert: data.phone === this.props.phone ? true : false,
-                    data: {
-                        title: 'Rejected',
-                        text: data.name+', your reservation has been rejected.'
-                    }
-                })
-            }
-            else if(data.status === 'pending'){
-                this.setState({
-                    loader: false,
-                    showAlert: data.phone === this.props.phone ? true : false,
-                    data: {
-                        title: 'Alternate Time',
-                        text: data.name+', there is availability at '+moment(data.time,"HH:mm").format("LT")
-                    },
-                    showCancelButton:true
-                })
-            }
-            else if(data.status === 'failed'){
-                this.setState({
-                    loader: false,
-                    showAlert: data.phone === this.props.phone ? true : false,
-                    data: {
-                        title: 'Failed',
-                        text: 'Restaurant not responding.'
-                    }
-                })
-            }
-        }
-        })
+        });
     }
 
     onPrevious(){
         this.props.history.push('stepThree')
     }
 
-    onNext(){
-        
-    }
+    onNext(){}
 	
 	phoneInput(event){
         var regex = /^[0-9]+$/;
@@ -105,9 +103,12 @@ class PhoneInput extends React.Component{
             this.props.time,
             this.props.party,
             this.props.phone,
-            1,
-            this.props.promotion
+            this.props.propertyId,
+            this.props.promotionId,
+            this.props.endTime,
+            'default'
         );
+        
         if(this.props.party && this.props.time && this.props.name && this.props.phone){
             var key = db.push({
                 party: this.props.party,
@@ -122,6 +123,7 @@ class PhoneInput extends React.Component{
                 key
             });
         }
+
         setTimeout(() => {
             if(this.state.loader){
                 fire.database().ref('reservations/'+this.state.key).update({
@@ -135,13 +137,11 @@ class PhoneInput extends React.Component{
     }
 
     onCompletion() {
-        this.props.onCompletion(
-        1,
-        this.props.auth);
+        this.props.onCompletion(this.props.propertyId, this.props.auth);
         this.props.history.push("/");
-      }
+    }
 
-	render(){
+	render() {
         return(
 			<div className="wrapper has-footer main">
 				<div className="main-header">
@@ -149,47 +149,60 @@ class PhoneInput extends React.Component{
 				</div>
 				<div className="card-raised">
                     <div className="row-no-gutters mt-page justify-content-center">
-                        {RenderIf(this.state.loader === false, 
-                        <div className="col name-page col-10 col-md-6 col-lg-4">
-                            <div className="row-no-gutters">
-                                <div className="col text-center">
-                                    <p className="page-heading">
-                                        <br />
-                                        <br />
-                                        {this.props.party} people @{" "}
-                                        {moment(this.props.time).format("LT")}
-                                    </p>
-                                    <p className="text-centet">
-                                    {this.props.name}, just one more step.
-                                        <br/>
-                                        Enter phone number just in case we'll contact you.
-                                    </p>
+                        {this.state.loader === false &&
+                            <div className="col name-page col-10 col-md-6 col-lg-4">
+                                <div className="row-no-gutters">
+                                    <div className="col text-center">
+                                        <p className="page-heading">
+                                            <br />
+                                            <br />
+                                            {this.props.party} people @{" "}
+                                            {moment(this.props.time).format("LT")}
+                                        </p>
+                                        <p className="text-centet">
+                                        {this.props.name}, just one more step.
+                                            <br/>
+                                            Enter phone number just in case we'll contact you.
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="row-no-gutters">
-                                <div className="col">
-                                    <input 
-                                        className="input-field" 
-                                        onChange={this.phoneInput.bind(this)} 
-                                        type="text"
-                                        placeholder="Phone"
-                                        value={this.props.phone}
-                                    />
-                                
-                                    <button className={"button-brand btn-block "+(this.props.phone===''?"disabled":"")}  
-                                    disabled={this.props.phone===''?true:false} 
-                                    onClick={this.onSubmit.bind(this)}>
-                                        Make A Request
-                                    </button>
+                                <div className="row-no-gutters">
+                                    <div className="col">
+                                        <input 
+                                            className="input-field" 
+                                            onChange={this.phoneInput.bind(this)} 
+                                            type="text"
+                                            placeholder="Phone"
+                                            value={this.props.phone}
+                                        />
+                                        <button
+                                            className={
+                                                "button-brand btn-block"+(this.props.phone === '' ? "disabled" : "")
+                                            }  
+                                            disabled={this.props.phone===''?true:false} 
+                                            onClick={this.onSubmit.bind(this)}
+                                        >
+                                            Make A Request
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                        )}
-                        {RenderIf(this.state.loader === true, 
+                        }
+                        {this.state.loader === true &&
                             <div>
-                                <img src={loader} alt="Loading" style={{width:'65%',height:'auto',marginLeft: 'auto',marginRight: 'auto',display: 'block'}} />
+                                <img
+                                    src={loader}
+                                    alt="Loading"
+                                    style={{
+                                        width:'65%',
+                                        height:'auto',
+                                        marginLeft: 'auto',
+                                        marginRight: 'auto',
+                                        display: 'block'
+                                    }}
+                                />
                             </div>
-                        )}
+                        }
 					</div>
                     <Footer
 						{...this.props}
@@ -243,7 +256,9 @@ const mapStateToProps = (state) => {
         time: state.form.time,
         propertyId: state.form.propertyId,
         auth: state.form.auth,
-        promotion: state.form.offer
+        promotion: state.form.offer,
+        endTime: state.form.endTime,
+        promotionId: state.form.promotionId,
     }
 }
 
@@ -254,4 +269,4 @@ export default connect(
         reservation,
         onCompletion
     }
-)(PhoneInput)
+)(PhoneInput);

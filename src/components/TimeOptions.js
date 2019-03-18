@@ -1,8 +1,8 @@
 import React from 'react';
 import moment from 'moment';
-import {connect} from 'react-redux';
-import {onTimeSelect, availability, setDate} from '../actions';
-import {Footer, PageHeading} from './common';
+import { connect } from 'react-redux';
+import { onTimeSelect, availability, setDate } from '../actions';
+import { Footer, PageHeading } from './common';
 import 'react-datepicker/dist/react-datepicker.css';
 import loader from '../assets/loader.gif'
 import Modal from 'react-modal';
@@ -27,7 +27,6 @@ const customStyles = {
 };
 
 class TimeOptions extends React.Component{
-	
 	constructor(props){
 		super(props);
 		this.state = {
@@ -52,7 +51,6 @@ class TimeOptions extends React.Component{
   }
 
   afterOpenModal() {
-    // references are now sync'd and can be accessed.
     this.subtitle.style.color = '#f00';
   }
 
@@ -60,9 +58,9 @@ class TimeOptions extends React.Component{
     this.setState({modalIsOpen: false});
   }
 
-	componentDidMount(){
-		db = fire.database().ref().child('reservations/1');
-		this.props.availability(this.props.date, this.props.party);
+	componentDidMount() {
+		db = fire.database().ref().child('reservations/'+this.props.propertyId);
+		this.props.availability(this.props.date, this.props.party, this.props.propertyId);
 
 		db.on('child_changed', (snapshot) => {
 			var data = snapshot.val();
@@ -88,36 +86,32 @@ class TimeOptions extends React.Component{
 			startTime: moment(this.state.reservationTime, 'h:mm:ss A').format('HH:mm:ss'),
 			status: 'pending',
 		});
+
 		this.setState({
 			loader: true
 		});
 	}
 
-	// componentWillReceiveProps(props){
-	// 	if(this.props.date !== props.date){
-	// 		this.props.availability(props.date, props.party);	
-	// 	}
-	// }
+	onPrevious() {
+		this.props.history.push('/');
+	}
 
-	onPrevious(){
-        this.props.history.push('/');
-    }
-
-    onNext(){
+	onNext() {
 		this.props.history.push('/stepThree');
 	}
 	
-	checkDisable(){
-		if(this.props.time===''){
-            return true;
-        }
-        else{
-            return false;
+	checkDisable() {
+		if(this.props.time === '') {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 
-	renderClick(value){
+	renderClick(value) {
 		this.props.onTimeSelect(value);
+
 		setTimeout(() => {
 			this.props.history.push('/stepThree');
 		}, 350)
@@ -133,33 +127,39 @@ class TimeOptions extends React.Component{
 		this.setState({isOpen: !this.state.isOpen})
 	}
 
-	renderTimeSlots(){
-		if (this.props.loading) {
+	renderTimeSlots() {
+		if(this.props.loading) {
 			return (
 			  <div>
-				<img
-				  src={loader}
-				  alt="Loading"
-				  style={{
-					width: "65%",
-					height: "auto",
-					marginLeft: "auto",
-					marginRight: "auto",
-					display: "block"
-				  }}
-				/>
+					<img
+						src={loader}
+						alt="Loading"
+						style={{
+							width: "65%",
+							height: "auto",
+							marginLeft: "auto",
+							marginRight: "auto",
+							display: "block"
+						}}
+					/>
 			  </div>
 			);
-		  }	
-		else if(this.props.timeSlots !== null && !this.props.loading ){
+		}	
+		else if(this.props.timeSlots !== null && !this.props.loading) {
 			var items = this.props.timeSlots.map((value, key) => {
 				return(
-					<div className={`checkbox-wrap ${this.props.time === value.startTime? "checkbox-wrap-active":""}`} onClick={()=>{this.renderClick(value)}}
-					key={key}>
+					<div
+						className={`checkbox-wrap ${this.props.time === value.startTime ? "checkbox-wrap-active" : ""}`}
+						onClick={() => this.renderClick(value)}
+						key={key}>
 						<div className="row">
 							<div className="form-check w-70">
 								<label className="label">
-									<input className="label__checkbox" type="checkbox"  checked={this.props.time === value.startTime? "checked":""} onChange={() => console.log('changed')}/>
+									<input
+										className="label__checkbox"
+										type="checkbox"
+										checked={this.props.time === value.startTime? "checked":""}
+									/>
 									<span className="label__text">
 										<span className="label__check">
 											<i className="fa fa-check icon" />
@@ -170,17 +170,23 @@ class TimeOptions extends React.Component{
 									{moment(value.startTime,"HH:mm:ss").format("LT")}
 								</label>
 							</div>
-							<div className="float-right w-30 offer-bg" style={{display: value.promotion ? "" : "none"}}>
-								{value.promotion !== null ? value.promotion.title : ""}
+							<div
+								className="float-right w-30 offer-bg"
+								style={{
+									display: value.offers.length > 0 ? "" : "none"
+								}}
+							>
+								{value.offers.length > 0 ? value.offers[0].title : ""}
 							</div>
 						</div>
 					</div>
 				);
-		})
+			})
 			return items;
 		}
 	}
-	render(){
+
+	render() {
 		return(
 			<div className="wrapper has-footer main">
 				<div className="main-header">
@@ -190,16 +196,14 @@ class TimeOptions extends React.Component{
 					<div className="row-no-gutters mt-page justify-content-center flex-container h-70vh">
 						{this.state.loader === false && 
 							<div className="col name-page col-10 col-md-6 col-lg-4">
-								<PageHeading
-									heading={`Arrival Time for ${this.props.party}`}
-								/>
+								<PageHeading heading={`Arrival Time for ${this.props.party}`} />
+
 								<div className="row-no-gutters">
 									<div className="col-md-12 col-12 col-xs-12 col-lg-12 h-35">
 										{this.renderTimeSlots()} 
 									</div>
 								</div>
-
-								<div className="row-no-gutters" style={{display:this.props.loading?"none":""}}>
+								<div className="row-no-gutters" style={{ display: this.props.loading ? "none" : "" }}>
 									<div className="col">
 										<button
 											className="btn button-brand mt-35"
@@ -261,7 +265,7 @@ class TimeOptions extends React.Component{
 											// })
 											// this.onCompletion();
 									}}
-									onCancel={()=>{
+									onCancel={() => {
 											// fire.database().ref('reservations/'+this.state.key).update({
 											// 		status: 'failed',
 											// 		read:'merchant'
@@ -300,7 +304,17 @@ class TimeOptions extends React.Component{
 						}
 						{this.state.loader === true && 
 							<div>
-								<img src={loader} alt="Loading" style={{width:'65%',height:'auto',marginLeft: 'auto',marginRight: 'auto',display: 'block'}} />
+								<img
+									src={loader}
+									alt="Loading"
+									style={{
+										width:'65%',
+										height:'auto',
+										marginLeft: 'auto',
+										marginRight: 'auto',
+										display: 'block'
+									}}
+								/>
 							</div>
 						}
 					</div>
@@ -314,9 +328,9 @@ class TimeOptions extends React.Component{
 						disableNext={this.checkDisable()}
 					/>
 				</div>
-        	</div>
-      	);
-    }
+			</div>
+		);
+	}
 }
 
 const mapStateToProps = (state) => {
@@ -327,6 +341,7 @@ const mapStateToProps = (state) => {
 			timeSlots: state.form.timeSlots,
 			date: state.form.date,
 			loading: state.form.loading,
+			propertyId: state.form.propertyId
     }
 }
 

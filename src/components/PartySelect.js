@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { onPartySelect, checkAuthorization, onCompletion } from '../actions';
-import { Footer, PageHeading } from './common';
+import { Footer } from './common';
 import queryString from 'query-string';
 import loader from '../assets/loader.gif';
 import forbidden from '../assets/forbidden.png';
@@ -20,7 +20,7 @@ class PartySelect extends React.Component{
 
 	componentDidMount() {
 		if (this.props.auth === false) {
-			this.props.checkAuthorization('ABC');
+			this.props.checkAuthorization('kolachi123');
 		}
 	}
 
@@ -39,6 +39,7 @@ class PartySelect extends React.Component{
 	
 	renderMore(){
 		let items = []; 
+
 		if(this.props.minPartySize + 3 <= this.props.maxPartySize){
 			for (var i = this.props.minPartySize + 3 ; i <= this.props.maxPartySize; i++) {             
 				items.push({
@@ -47,6 +48,7 @@ class PartySelect extends React.Component{
 				});   
 			}
 		}
+
 		return items;
 	}
 
@@ -56,6 +58,7 @@ class PartySelect extends React.Component{
 	
 	partySize(value){
 		this.props.onPartySelect(value);
+
 		setTimeout(() => {
 			this.props.history.push('/stepTwo');
 		}, 200)
@@ -65,12 +68,22 @@ class PartySelect extends React.Component{
 		if(this.props.loading){
 			return(
 				<div>
-					<img src={loader} alt="Loading" style={{ width: '65%', height: 'auto', marginLeft: 'auto',marginRight: 'auto', display: 'block' }} />
+					<img
+						src={loader}
+						alt="Loading"
+						style={{
+							width: '65%',
+							height: 'auto',
+							marginLeft: 'auto',
+							marginRight: 'auto',
+							display: 'block'
+						}}
+					/>
 				</div>
 			);
 		}
-		else if(this.props.auth){
-			return(
+		else if(this.props.auth) {
+			return (
 				<div className="col party-page col-10 col-md-6 col-lg-4">
 					<div className="row-no-gutters">
 						<div className="col text-center">
@@ -78,22 +91,36 @@ class PartySelect extends React.Component{
 						</div>
 					</div>
 					<div className="row-no-gutters">
-						<div className="col-md-3 col-3 col-xs-3 col-lg-3" style={{paddingLeft:10,paddingRight:10, margin: 'auto'}}>
+						<div
+							className="col-md-3 col-3 col-xs-3 col-lg-3"
+							style={{
+								paddingLeft:10,
+								paddingRight:10,
+								margin: 'auto'
+							}}
+						>
 							<button
-								style={{backgroundColor:this.props.party === this.props.minPartySize ? "#676767" : ""}}
+								style={{
+									backgroundColor: this.props.party === this.props.minPartySize ? "#676767" : ""
+								}}
 								className="select-brand button-brand btn-block"
 								onClick={this.partySize.bind(this, this.props.minPartySize)}
 							>
 								{this.props.minPartySize}
 							</button>
 						</div>
-						<div className="col-md-3 col-3 col-xs-3 col-lg-3"  style={{paddingLeft:10,paddingRight:10, margin: 'auto'}}>
+						<div
+							className="col-md-3 col-3 col-xs-3 col-lg-3"
+							style={{
+								paddingLeft:10,
+								paddingRight:10,
+								margin: 'auto'
+							}}
+						>
 							<button
 								style={{
 								backgroundColor:
-									this.props.party === this.props.minPartySize + 1
-									? "#676767"
-									: ""
+									this.props.party === this.props.minPartySize + 1 ? "#676767" : ""
 								}}
 								className="select-brand button-brand btn-block"
 								onClick={this.partySize.bind(this, this.props.minPartySize + 1)}
@@ -101,13 +128,18 @@ class PartySelect extends React.Component{
 								{this.props.minPartySize + 1}
 							</button>
 						</div>
-						<div className="col-md-3 col-3 col-xs-3 col-lg-3"  style={{paddingLeft:10,paddingRight:10, margin: 'auto'}}>
+						<div
+							className="col-md-3 col-3 col-xs-3 col-lg-3"
+							style={{
+								paddingLeft:10,
+								paddingRight:10,
+								margin: 'auto'
+							}}
+						>
 							<button
 								style={{
 								backgroundColor:
-									this.props.party === this.props.minPartySize + 2
-									? "#676767"
-									: ""
+									this.props.party === this.props.minPartySize + 2 ? "#676767" : ""
 								}}
 								className="select-brand button-brand btn-block"
 								onClick={this.partySize.bind(this, this.props.minPartySize + 2)}
@@ -115,25 +147,46 @@ class PartySelect extends React.Component{
 								{this.props.minPartySize + 2}
 							</button>
 						</div>
-						{!(this.props.minPartySize + 3 > this.props.maxPartySize) && <div className="col-md-3 col-3 col-xs-3 col-lg-3"  style={{paddingLeft:10,paddingRight:10, margin: 'auto'}}>
-						<Select
-							className="select-brand"
-							options={this.renderMore()}
-							isSearchable={false}
-							onChange={selectedOption => {
-							this.partySize(selectedOption.label);
-							}}
-							placeholder={this.props.party >= this.props.minPartySize+3? this.props.party: "+"}
-						/>
-						</div>}
+						{!(this.props.minPartySize + 3 > this.props.maxPartySize) && 
+							<div
+								className="col-md-3 col-3 col-xs-3 col-lg-3"
+								style={{
+									paddingLeft:10,
+									paddingRight:10,
+									margin: 'auto'
+								}}
+							>
+								<Select
+									className="select-brand"
+									options={this.renderMore()}
+									isSearchable={false}
+									onChange={selectedOption => {
+										this.partySize(selectedOption.label);
+									}}
+									placeholder={
+										this.props.party >= this.props.minPartySize + 3 ? this.props.party : "+"
+									}
+								/>
+							</div>
+						}
 					</div>
             	</div>	
-			)
+			);
 		}
-		else{
-			return(
+		else {
+			return (
 				<div>
-					<img src={forbidden} alt="Loading" style={{width:'65%',height:'auto',marginLeft: 'auto',marginRight: 'auto',display: 'block'}} />
+					<img
+						src={forbidden}
+						alt="Loading"
+						style={{
+							width:'65%',
+							height:'auto',
+							marginLeft: 'auto',
+							marginRight: 'auto',
+							display: 'block'
+						}}
+					/>
 				</div>
 			);
 		}
@@ -165,7 +218,7 @@ class PartySelect extends React.Component{
 }
 
 const mapStateToProps = (state) => {
-    return{
+    return {
 		party : state.form.party,
 		auth: state.form.auth,
 		loading:state.form.loading,

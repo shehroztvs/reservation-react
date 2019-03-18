@@ -1,13 +1,13 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import {onNameSelect} from '../actions';
-import {Footer} from './common';
+import { connect } from 'react-redux';
+import { onNameSelect } from '../actions';
+import { Footer } from './common';
 import moment from 'moment';
 var $ = require("jquery");
 
-class NameInput extends React.Component{
+class NameInput extends React.Component {
 
-	checkDisable(){
+	checkDisable() {
 		if(this.props.name === ''){
       return true;
     }
@@ -16,15 +16,15 @@ class NameInput extends React.Component{
     }
 	}
 
-  onPrevious(){
+  onPrevious() {
     this.props.history.push('/stepTwo');
   }
 
-  onNext(){
+  onNext() {
     this.props.history.push('/stepFour');
   }
 
-  nameInput(event){
+  nameInput(event) {
     this.props.onNameSelect(event.target.value);
   }
     
