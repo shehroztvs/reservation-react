@@ -75,7 +75,7 @@ export const reservation = (name, time, party, phone, propertyId, promotion, end
                 endTime
             }
         )
-        .then((response) => {console.log(response); reservationSuccess(dispatch, response)})
+        .then((response) => reservationSuccess(dispatch, response))
         .catch((error) => console.log(error));
     }
 }
@@ -100,11 +100,12 @@ const reservationSuccess = (dispatch, response) => {
     });
 }
 
-export const checkAuthorization =(secret)=>{
+export const checkAuthorization =(secret, date)=>{
     return (dispatch)=>{
         dispatch({type:REQUEST_AVAILABILITY});
         axios.post(apiUrl + 'domainVerification', {
-            secret: secret
+            secret: secret,
+            date
         })
         .then(response=>authSuccess(dispatch,response))
         .catch(()=>authFail(dispatch))

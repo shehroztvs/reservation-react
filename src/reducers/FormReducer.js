@@ -4,7 +4,6 @@ import {
     NAME_SELECT,
     PHONE_SELECT,
     REQUEST_AVAILABILITY,
-    REQUEST_RESERVATION,
     AVAILABILITY_SUCCESS,
     RESERVATION_SUCCESS,
     SET_DATE,
@@ -32,6 +31,10 @@ const Initial_State = {
     maxPartySize: null,
     endTime: null,
     promotionId: null,
+    propertyPhone: null,
+    propertyStartTime: null,
+    propertyEndTime: null,
+    type: null
 }
 
 export default (state = Initial_State, action) => {
@@ -46,7 +49,8 @@ export default (state = Initial_State, action) => {
                 time: action.payload.startTime,
                 offer: action.payload.offers,
                 endTime: action.payload.endTime,
-                promotionId: action.payload.iD
+                promotionId: action.payload.iD,
+                type: action.payload.type !== undefined ? action.payload.type : null
             }
         case NAME_SELECT:
             return {
@@ -87,7 +91,10 @@ export default (state = Initial_State, action) => {
                 loading: false,
                 propertyId: action.payload.data.iD,
                 minPartySize: parseInt(action.payload.data.minPartySize),
-                maxPartySize: parseInt(action.payload.data.maxPartySize)
+                maxPartySize: parseInt(action.payload.data.maxPartySize),
+                propertyPhone: action.payload.data.phone,
+                propertyStartTime: action.payload.data.timing.start_time,
+                propertyEndTime: action.payload.data.timing.end_time
             }
         case AUTH_FAIL:
             return{

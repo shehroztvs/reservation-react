@@ -5,6 +5,7 @@ import PartySelect from './components/PartySelect';
 import TimeOptions from './components/TimeOptions';
 import NameInput from './components/NameInput';
 import PhoneInput from './components/PhoneInput';
+import Completion from './components/Completion';
 
 import PageShell from './components/common/PageShell';
 
@@ -25,6 +26,7 @@ class App extends Component {
             <Route path="/stepTwo" component={PageShell(TimeOptions)} />
             <Route path="/stepThree" component={PageShell(NameInput)} />
             <Route path="/stepFour" component={PageShell(PhoneInput)} />
+            <Route path="/completion" component={PageShell(Completion)} />
           </Switch>
         </Router>
       </Provider>

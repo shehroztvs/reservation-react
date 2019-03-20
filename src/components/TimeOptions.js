@@ -79,17 +79,28 @@ class TimeOptions extends React.Component{
 	}
 
 	requestRestaurant() {
-		db.push({
-			client: 'visitor',
-			endTime: moment(this.state.reservationTime, 'h:mm:ss A').add(1,'hour').add(30,'minutes').format('HH:mm:ss'),
-			partySize: this.props.party,
+		var data = {
 			startTime: moment(this.state.reservationTime, 'h:mm:ss A').format('HH:mm:ss'),
-			status: 'pending',
-		});
+			endTime: moment(this.state.reservationTime, 'h:mm:ss A').add(1,'hour').add(30,'minutes').format('HH:mm:ss'),
+			offers: null,
+			promotionId: null,
+			type: 'custom'
+		}
+		this.props.onTimeSelect(data);
+		setTimeout(() => {
+			this.props.history.push('/stepThree');
+		}, 350)
+		// db.push({
+		// 	client: 'visitor',
+		// 	endTime: moment(this.state.reservationTime, 'h:mm:ss A').add(1,'hour').add(30,'minutes').format('HH:mm:ss'),
+		// 	partySize: this.props.party,
+		// 	startTime: moment(this.state.reservationTime, 'h:mm:ss A').format('HH:mm:ss'),
+		// 	status: 'pending',
+		// });
 
-		this.setState({
-			loader: true
-		});
+		// this.setState({
+		// 	loader: true
+		// });
 	}
 
 	onPrevious() {
@@ -235,17 +246,17 @@ class TimeOptions extends React.Component{
 										}}
 										theme="classic"
 										timeMode="12"
-										// timeConfig={{
-										// 	from:this.renderStartTimeForStart(),
-										// 	to: this.renderEndTimeForStart(),
-										// 	step: 90,
-										// 	unit: 'minutes'
-										// }}
+										timeConfig={{
+											from: moment(this.props.propertyStartTime, 'HH:mm:ss').format('LT'),
+											to: moment(this.props.propertyEndTime, 'HH:mm:ss').format('LT'),
+											step: 90,
+											unit: 'minutes'
+										}}
 										time={this.state.reservationTime !== '' ? this.state.reservationTime : '00:00'}
 									/>
 								</Modal>
 
-								<SweetAlert
+								{/* <SweetAlert
 									show={this.state.showAlert}
 									title={this.state.reservationData.title ? this.state.reservationData.title : ''}
 									text={this.state.reservationData.text}
@@ -275,7 +286,7 @@ class TimeOptions extends React.Component{
 											// })
 											// this.onCompletion();
 									}}
-								/>
+								/> */}
 
 								{/* <div className="row-no-gutters" style={{display:this.props.loading?"none":""}}>
 									<div className="col">
@@ -335,14 +346,16 @@ class TimeOptions extends React.Component{
 
 const mapStateToProps = (state) => {
 	return{
-			selectedTime: state.form.selectedTime,
-			time : state.form.time,
-			party: state.form.party,
-			timeSlots: state.form.timeSlots,
-			date: state.form.date,
-			loading: state.form.loading,
-			propertyId: state.form.propertyId
-    }
+		selectedTime: state.form.selectedTime,
+		time : state.form.time,
+		party: state.form.party,
+		timeSlots: state.form.timeSlots,
+		date: state.form.date,
+		loading: state.form.loading,
+		propertyId: state.form.propertyId,
+		propertyStartTime: state.form.propertyStartTime,
+		propertyEndTime: state.form.propertyEndTime
+	}
 }
 
 export default connect(

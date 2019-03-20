@@ -20,7 +20,7 @@ class PartySelect extends React.Component{
 
 	componentDidMount() {
 		if (this.props.auth === false) {
-			this.props.checkAuthorization('kolachi123');
+			this.props.checkAuthorization('kolachi123', this.props.date);
 		}
 	}
 
@@ -223,7 +223,8 @@ const mapStateToProps = (state) => {
 		auth: state.form.auth,
 		loading:state.form.loading,
 		minPartySize: state.form.minPartySize,
-    	maxPartySize: state.form.maxPartySize
+		maxPartySize: state.form.maxPartySize,
+		date: state.form.date
     }
 }
 
